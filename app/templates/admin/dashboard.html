@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت | {{ app_name }}</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --text: #172033;
+            --muted: #667085;
+            --border: #e4e7ec;
+            --bg: #f7f9fc;
+            --card: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            font-family: Vazirmatn, Tahoma, Arial, sans-serif;
+            background: var(--bg);
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 18px max(24px, calc((100% - 1180px) / 2));
+            border-bottom: 1px solid var(--border);
+            background: #fff;
+        }
+
+        .brand {
+            color: var(--primary);
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .logout-button {
+            padding: 9px 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: var(--text);
+            cursor: pointer;
+            font: inherit;
+            background: #fff;
+        }
+
+        .logout-button:hover {
+            background: #f8fafc;
+        }
+
+        main {
+            width: min(1180px, calc(100% - 48px));
+            margin: 0 auto;
+            padding: 48px 0;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 30px;
+        }
+
+        .lead {
+            margin: 0 0 30px;
+            color: var(--muted);
+            line-height: 1.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            padding: 22px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--card);
+        }
+
+        .card .label {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .card .value {
+            margin-top: 12px;
+            color: var(--primary);
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .notice {
+            margin-top: 24px;
+            padding: 20px;
+            border: 1px solid #bfdbfe;
+            border-radius: 14px;
+            color: #1e3a8a;
+            line-height: 2;
+            background: #eff6ff;
+        }
+
+        code {
+            direction: ltr;
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 5px;
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        @media (max-width: 700px) {
+            .topbar {
+                padding: 16px 20px;
+            }
+
+            main {
+                width: min(100% - 32px, 1180px);
+                padding: 32px 0;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-info span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">{{ app_name }}</div>
+
+        <div class="admin-info">
+            <span>مدیر: {{ admin_username }}</span>
+
+            <form method="post" action="/admin/logout">
+                <input type="hidden" name="csrf_token" value="{{ request.session.get('admin_csrf_token', '') }}">
+                <button class="logout-button" type="submit">خروج</button>
+            </form>
+        </div>
+    </header>
+
+    <main>
+        <h1>پنل مدیریت</h1>
+        <p class="lead">
+            خوش آمدید. از این بخش فرم‌ها و پاسخ‌های ثبت‌شده مدیریت خواهند شد.
+        </p>
+
+        <section class="grid">
+            <article class="card">
+                <div class="label">فرم‌های فعال</div>
+                <div class="value">۰</div>
+            </article>
+
+            <article class="card">
+                <div class="label">پاسخ‌های ثبت‌شده</div>
+                <div class="value">۰</div>
+            </article>
+
+            <article class="card">
+                <div class="label">نسخه برنامه</div>
+                <div class="value">{{ app_version }}</div>
+            </article>
+        </section>
+
+        <section class="notice">
+            ورود امن به پنل با موفقیت فعال شده است.
+            در مرحله بعدی، بخش‌های «ساخت فرم از CSV»، «فهرست فرم‌ها»
+            و «نمایش و خروجی پاسخ‌های کاربران» را به همین پنل متصل می‌کنیم.
+            پایگاه داده فعلی در مسیر <code>/data/forms.db</code> قرار دارد.
+        </section>
+    </main>
+</body>
+</html>

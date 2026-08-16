@@ -6,6 +6,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.templating import Jinja2Templates
 
 from app.config import get_settings
+from app.routers.admin import router as admin_router
 
 
 settings = get_settings()
@@ -39,6 +40,9 @@ app.mount(
 )
 
 templates = Jinja2Templates(directory="app/templates")
+app.state.templates = templates
+
+app.include_router(admin_router)
 
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
