@@ -151,8 +151,7 @@
             <span>مدیر: {{ admin_username }}</span>
 
             <form method="post" action="/admin/logout">
-                <input type="hidden" name="csrf_token" value="{{ request.session.get('admin_csrf_token', '') }}">
-                <button class="logout-button" type="submit">خروج</button>
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">                <button class="logout-button" type="submit">خروج</button>
             </form>
         </div>
     </header>

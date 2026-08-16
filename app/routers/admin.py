@@ -1,9 +1,8 @@
 import hmac
 import secrets
-from collections.abc import Callable
 from typing import Any
 
-from fastapi import APIRouter, Form, Request
+from fastapi import APIRouter, Form, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.config import get_settings
@@ -17,13 +16,13 @@ SESSION_CSRF_KEY = "admin_csrf_token"
 
 
 def get_templates(request: Request) -> Any:
-    """Return configured Jinja templates from application state."""
+    """Return Jinja templates configured in application state."""
 
     return request.app.state.templates
 
 
 def create_csrf_token(request: Request) -> str:
-    """Create and save a CSRF token in the current session."""
+    """Create a CSRF token and save it to the current session."""
 
     token = secrets.token_urlsafe(32)
     request.session[SESSION_CSRF_KEY] = token
@@ -31,13 +30,13 @@ def create_csrf_token(request: Request) -> str:
 
 
 def is_admin_authenticated(request: Request) -> bool:
-    """Check whether current browser session belongs to an admin."""
+    """Return True when the current session is authenticated as admin."""
 
     return request.session.get(SESSION_ADMIN_KEY) is True
 
 
 def redirect_to_login() -> RedirectResponse:
-    """Redirect unauthenticated users to login page."""
+    """Redirect unauthenticated users to admin login."""
 
     return RedirectResponse(url="/admin/login", status_code=303)
 
@@ -47,7 +46,7 @@ def render_login(
     error: str | None = None,
     status_code: int = 200,
 ) -> HTMLResponse:
-    """Render login page."""
+    """Render the admin login template."""
 
     csrf_token = create_csrf_token(request)
 
@@ -63,15 +62,30 @@ def render_login(
     )
 
 
-@router.get("", response_class=HTMLResponse, include_in_schema=False)
-@router.get("/", response_class=HTMLResponse, include_in_schema=False)
-async def admin_dashboard(request: Request) -> HTMLResponse | RedirectResponse:
-    """Render the protected admin dashboard."""
+@router.get(
+    "",
+    response_class=HTMLResponse,
+    response_model=None,
+    include_in_schema=False,
+)
+@router.get(
+    "/",
+    response_class=HTMLResponse,
+    response_model=None,
+    include_in_schema=False,
+)
+async def admin_dashboard(request: Request) -> Response:
+    """Render protected admin dashboard."""
 
     if not is_admin_authenticated(request):
         return redirect_to_login()
 
     settings = get_settings()
+
+    # Ensure logout form always has a valid CSRF token.
+    csrf_token = request.session.get(SESSION_CSRF_KEY)
+    if not csrf_token:
+        csrf_token = create_csrf_token(request)
 
     return get_templates(request).TemplateResponse(
         request=request,
@@ -83,14 +97,18 @@ async def admin_dashboard(request: Request) -> HTMLResponse | RedirectResponse:
                 SESSION_ADMIN_USERNAME_KEY,
                 settings.admin_username,
             ),
+            "csrf_token": csrf_token,
         },
     )
 
 
-@router.get("/login", response_class=HTMLResponse, include_in_schema=False)
-async def admin_login_page(
-    request: Request,
-) -> HTMLResponse | RedirectResponse:
+@router.get(
+    "/login",
+    response_class=HTMLResponse,
+    response_model=None,
+    include_in_schema=False,
+)
+async def admin_login_page(request: Request) -> Response:
     """Render admin login page."""
 
     if is_admin_authenticated(request):
@@ -99,14 +117,19 @@ async def admin_login_page(
     return render_login(request)
 
 
-@router.post("/login", response_class=HTMLResponse, include_in_schema=False)
+@router.post(
+    "/login",
+    response_class=HTMLResponse,
+    response_model=None,
+    include_in_schema=False,
+)
 async def admin_login(
     request: Request,
     username: str = Form(...),
     password: str = Form(...),
     csrf_token: str = Form(...),
-) -> HTMLResponse | RedirectResponse:
-    """Authenticate an administrator and create an authenticated session."""
+) -> Response:
+    """Authenticate administrator and create a session."""
 
     settings = get_settings()
 
@@ -130,38 +153,36 @@ async def admin_login(
     if not (csrf_is_valid and username_is_valid and password_is_valid):
         return render_login(
             request=request,
-            error="نام کاربری، رمز عبور یا درخواست امنیتی معتبر نیست.",
+            error="نام کاربری یا رمز عبور صحیح نیست.",
             status_code=401,
         )
 
+    # Remove the temporary login session and create a clean admin session.
     request.session.clear()
+
     request.session[SESSION_ADMIN_KEY] = True
     request.session[SESSION_ADMIN_USERNAME_KEY] = settings.admin_username
+
+    # New token needed after session.clear().
+    create_csrf_token(request)
 
     return RedirectResponse(url="/admin", status_code=303)
 
 
-@router.post("/logout", include_in_schema=False)
+@router.post(
+    "/logout",
+    response_model=None,
+    include_in_schema=False,
+)
 async def admin_logout(
     request: Request,
     csrf_token: str = Form(...),
-) -> RedirectResponse:
-    """Destroy authenticated admin session."""
+) -> Response:
+    """Log out current administrator."""
 
     session_csrf_token = request.session.get(SESSION_CSRF_KEY, "")
 
-    if csrf_token and hmac.compare_digest(csrf_token, session_csrf_token):
+    if hmac.compare_digest(csrf_token, session_csrf_token):
         request.session.clear()
-
-    return RedirectResponse(url="/admin/login", status_code=303)
-
-
-@router.get("/logout", include_in_schema=False)
-async def admin_logout_get() -> RedirectResponse:
-    """
-    Redirect GET logout requests to login.
-
-    Actual logout requires POST and CSRF validation.
-    """
 
     return RedirectResponse(url="/admin/login", status_code=303)
