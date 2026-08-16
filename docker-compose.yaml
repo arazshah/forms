@@ -1,0 +1,43 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    restart: unless-stopped
+
+    environment:
+      APP_NAME: ${APP_NAME:-Araz Forms}
+      APP_ENV: ${APP_ENV:-production}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      APP_VERSION: ${APP_VERSION:-0.1.0}
+
+      APP_BASE_URL: ${APP_BASE_URL:-https://forms.araz.me}
+      APP_ALLOWED_HOSTS: ${APP_ALLOWED_HOSTS:-forms.araz.me,localhost,127.0.0.1,web}
+      APP_SECURE_COOKIES: ${APP_SECURE_COOKIES:-true}
+
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required}
+
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////data/forms.db}
+
+    expose:
+      - "8000"
+
+    volumes:
+      - forms_data:/data
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  forms_data:

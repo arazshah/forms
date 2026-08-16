@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="theme-color"
+        content="#ffffff"
+    >
+
+    <meta
+        name="description"
+        content="{% block description %}فرم‌ها و نظرسنجی‌های آنلاین Araz Forms{% endblock %}"
+    >
+
+    <title>
+        {% block title %}{{ app_name }}{% endblock %}
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='css/app.css') }}"
+    >
+
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <a class="skip-link" href="#main-content">
+        رفتن به محتوای اصلی
+    </a>
+
+    <header class="site-header">
+        <div class="container header-content">
+            <a
+                class="brand"
+                href="/"
+                aria-label="صفحه اصلی Araz Forms"
+            >
+                <span class="brand-icon" aria-hidden="true">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M9 11l3 3L22 4"></path>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                </span>
+
+                <span class="brand-text">
+                    <strong>Araz Forms</strong>
+                    <small>فرم‌های ساده و کاربردی</small>
+                </span>
+            </a>
+
+            <nav class="header-nav" aria-label="منوی اصلی">
+                <a href="/">صفحه اصلی</a>
+                <a href="/admin">مدیریت</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <p>
+                طراحی و توسعه با
+                <span aria-label="علاقه">♥</span>
+                توسط Araz
+            </p>
+
+            <p class="footer-version">
+                نسخه {{ app_version }}
+            </p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

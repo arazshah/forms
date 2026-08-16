@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Araz Forms | فرم‌ها و نظرسنجی‌های آنلاین
+{% endblock %}
+
+{% block description %}
+    Araz Forms سامانه‌ای ساده برای ایجاد فرم، نظرسنجی، ثبت‌نام و عضوگیری است.
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container hero-content">
+        <div class="hero-badge">
+            <span class="hero-badge-dot"></span>
+            سامانه فرم و نظرسنجی
+        </div>
+
+        <h1>
+            نظرها و پاسخ‌ها،
+            <span>ساده و منظم</span>
+        </h1>
+
+        <p class="hero-description">
+            Araz Forms سامانه‌ای سبک برای نظرسنجی، ثبت‌نام،
+            عضوگیری و جمع‌آوری بازخورد است.
+        </p>
+
+        <div class="hero-actions">
+            <a class="button button-primary" href="#public-forms">
+                مشاهده فرم‌های فعال
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="forms-section" id="public-forms">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="section-label">فرم‌های عمومی</span>
+                <h2>فرم‌های فعال</h2>
+            </div>
+
+            <p>
+                فرم‌های منتشرشده و قابل‌دسترسی در این قسمت نمایش داده می‌شوند.
+            </p>
+        </div>
+
+        <div class="empty-state">
+            <div class="empty-icon" aria-hidden="true">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                >
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+            </div>
+
+            <h3>هنوز فرم عمومی منتشر نشده است</h3>
+
+            <p>
+                پس از ایجاد و انتشار اولین فرم، لینک آن در این بخش
+                نمایش داده خواهد شد.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="features-section">
+    <div class="container">
+        <div class="features-grid">
+            <article class="feature">
+                <div class="feature-number">۱</div>
+                <h3>فرم‌های ساده</h3>
+                <p>
+                    فرم‌های سبک، سریع و مناسب نمایش در موبایل و دسکتاپ.
+                </p>
+            </article>
+
+            <article class="feature">
+                <div class="feature-number">۲</div>
+                <h3>حفظ حریم خصوصی</h3>
+                <p>
+                    اطلاعات هر فرم فقط برای هدف اعلام‌شده استفاده می‌شود.
+                </p>
+            </article>
+
+            <article class="feature">
+                <div class="feature-number">۳</div>
+                <h3>پاسخ‌گویی سریع</h3>
+                <p>
+                    بدون نیاز به ساخت حساب کاربری یا طی‌کردن مراحل پیچیده.
+                </p>
+            </article>
+        </div>
+    </div>
+</section>
+{% endblock %}
